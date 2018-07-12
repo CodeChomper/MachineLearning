@@ -1,4 +1,4 @@
-data_path <- "/home/json/Documents/git/MachineLearning/jan_2015_ontime.csv"
+data_path <- "C:\\Users\\anyai\\Documents\\GitHub\\MachineLearning\\jan_2015_ontime.csv"
 
 origData <- read.csv2(data_path, sep = ",", header = TRUE, stringsAsFactors = FALSE)
 
@@ -68,33 +68,23 @@ testDataFiltered <- ontimeDataFiltered[-inTrainRows,]
 # the data we can use  a . for the columns to use.
 # the method="glm" is generalized linear regression. A list of methods is in the doc for caret
 # to make sure we use logistics regression we need to set the family to binomial
-logisticRegModel <- train(ARR_DEL15 ~ ., data = trainDataFiltered, method="glm", family="binomial")
+
+# THIS DIDN'T WORK WELL
+#logisticRegModel <- train(ARR_DEL15 ~ ., data = trainDataFiltered, method="glm", family="binomial")
 
 # test the model
-logRegPrediction <- predict(logisticRegModel, testDataFiltered)
+
+# THIS DIDN'T WORK WELL
+#logRegPrediction <- predict(logisticRegModel, testDataFiltered)
 
 # evaluate the quality of the model by using caret's confusionMatrix function
 # the first param is the test we just ran and the second param is the test data's column we want to predict
-logRegConfMat <- confusionMatrix(logRegPrediction, testDataFiltered[,"ARR_DEL15"])
 
-print(logRegConfMat)
+# THIS DIDN'T WORK WELL
+#logRegConfMat <- confusionMatrix(logRegPrediction, testDataFiltered[,"ARR_DEL15"])
 
-#The first set of statistics is a matrix that compares the predictive and actual values for delays
-#               reference
-# prediction   0.00  1.00
-#       0.00     A    B
-#       1.00     C    D
-
-# A is the number of flights in the test data that were not delayed when the model predicted they would not be delayed.
-# B is the number of flights in the test data were delayed when the model predicted they would not be delayed.
-# C is the number of flights in the test data that were not delayed when the model predicted they would be delayed.
-# D is the number of flights in the test data that were delayed when the model predicted they would be delayed.
-
-# Accuracy is a ratio of the model prediction to the correct answer.
-# Sensitivity is the measure of how the model predicts no delay when there is no delay.
-# Specificity is the measure of how the model predicts delay when there is a delay.
-# Pos Pred Value is the measure of how the model predicts when there will be no delay
-# Neg Pred Value is the measure of how the model predicts when there will be a delay
+# THIS DIDN'T WORK WELL
+#print(logRegConfMat)
 
 # We need to improve our model, we have to many flights that are being delayed that are not being predected as delayed.
 # We are going to try a different Algo
@@ -113,4 +103,26 @@ library(randomForest)
 # The second param is the column we want to predict
 rfModel <- randomForest(trainDataFiltered[-1], trainDataFiltered$ARR_DEL15, proximity = TRUE, importance = TRUE)
 
+# Test the random forest
+rfValidation <- predict(rfModel, testDataFiltered)
 
+rfConfMat <- confusionMatrix(rfValidation, testDataFiltered[,"ARR_DEL15"])
+
+print(rfConfMat)
+
+#The first set of statistics is a matrix that compares the predictive and actual values for delays
+#               reference
+# prediction   0.00  1.00
+#       0.00     A    B
+#       1.00     C    D
+
+# A is the number of flights in the test data that were not delayed when the model predicted they would not be delayed.
+# B is the number of flights in the test data were delayed when the model predicted they would not be delayed.
+# C is the number of flights in the test data that were not delayed when the model predicted they would be delayed.
+# D is the number of flights in the test data that were delayed when the model predicted they would be delayed.
+
+# Accuracy is a ratio of the model prediction to the correct answer.
+# Sensitivity is the measure of how the model predicts no delay when there is no delay.
+# Specificity is the measure of how the model predicts delay when there is a delay.
+# Pos Pred Value is the measure of how the model predicts when there will be no delay
+# Neg Pred Value is the measure of how the model predicts when there will be a delay
