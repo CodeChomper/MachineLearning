@@ -1,0 +1,295 @@
+Machine Learning
+    Two types of ML Supervised and Unsupervised.
+
+    Supervised                      Unsupervised
+    Value Prediction
+                                    Identify clusters of like data
+    Needs training data             Tries to find the data
+    Trained model predicts value    Model provides access to data by clusters
+
+    Most problems solved by Supervised ML
+
+--------------------------------------------------------------------------------
+Machine Learning workflow:
+    An orchestrated and repeatable pattern which systematically transforms
+    and processes information to create prediction solutions.
+
+    Steps:
+        1) Ask the right question
+        2) Prep the data
+        3) Select the algorithm
+        4) Training the model with subset of data
+        5) Testing the model with new data
+
+    Guidelines
+        Early steps are most important
+        Expect to go backwards
+        Data is never as you need it
+        More data = better results
+        Don't pursue a bad solution
+    
+    Solution statement goals:
+        Define scope (including data sources)
+        Define target performance
+        Define context for usage
+        Define how the solution will be created
+    
+    Example:
+        Predict if a flight would be on-time
+            Assumptions:
+                Us Flights only
+                Flights between us airports only
+                DOT database is a good sources
+        
+        "Using DOT data, predict if a flight would be on-time"
+            Review DOT data and find on-time statistics are not track but 
+            instead they track delays
+        
+        "Using DOT data, predict if a flight would be delayed"
+            Performance Targets:
+                Binary result (True or False)
+                Coin Flip = 50% Accuracy so we want better!
+                70% Accuracy is a common target in ML
+        
+        "Using DOT data, predict with 70+% accuracy if a flight would be delayed"
+            Data driven results 
+                Does delayed mean leaving late too? For this example it only
+                means arriving late.
+                DOT "delayed" is greater than 15 minutes after scheduled
+        
+        "Using DOT data, predict with 70+% accuracy if a flight would arrive
+        15+ minutes after the scheduled arrival time."
+            Solution Creating
+                Use the ML workflow
+                process DOT data
+                transform data as required
+
+        "Use the Machine Learning Workflow to process and transform DOT data
+        to create a prediction model. This model must predict whether a flight
+        would arrive 15+ minutes after the scheduled arrival time with 70+%
+        accuracy."
+
+--------------------------------------------------------------------------------
+Tidy Data
+    Tidy datasets are easy to manipulate, model and visualize, and have 
+    a specific structure:
+        each variable is a column,
+        each observation is a row,
+        each type of observational unit is a table.
+
+    50 - 80 % of a ML project is spent getting, cleaning, and organizing data.
+
+--------------------------------------------------------------------------------
+Getting Data:
+    http://bit.ly/DOT_OnTime
+
+--------------------------------------------------------------------------------------------------
+Selecting the right algorithm
+    Use solution statement to filter algorithms
+    Select one initial algorithm (we may need to cycle back through the workflow)
+
+    Role of the algorithm
+        the algorithm is the engine of the application and is fed data via train().
+        the algorithm then produces a trained model. The model will contain a prediction function
+        often called predict(). When this function is called real data is passed and the model
+        uses it's code and parameters to produce results.
+
+    There are over 50 algorithms
+        Compare factors
+            Learning type
+            result
+            complexity
+            basic vs enhanced
+            Supervised vs Unsupervised
+    
+    Result types can be broken down into two types
+        Regression = continuous values
+        Classification = Discrete values
+    
+    complexity
+        Eliminate "ensemble" algorithms
+        -Container algorithm
+        -Multiple child algorithms
+        -Boost performance
+        -Difficult to debug
+    
+    Enhanced Vs basic
+        Enhanced
+        -variation of basic
+        -performance improvements
+        -additional functionality
+        -more complexity
+
+        basic
+        - simpler
+        - easier to understand
+
+    For the example flight delays we will look at these three types
+    Naive Bayes, Logistic Regression, Decision Tree
+
+    Naive Bayes
+        Requires smaller amount of data to train
+    
+    Logistic Regression
+        Returns Binary
+        Weights each feature
+    
+    Decision Tree
+        uses Binary Tree
+        a lot of data may be required to train
+        has visualization tools!
+
+    We are going to start with Logistic Regression because it is easy to understand,
+    the training time is fast, and the algorithm is stable to data changes.
+
+--------------------------------------------------------------------------------
+Machine Learning Training
+    Letting specific data teach a machine learning algorithm to create
+    a specific forecast model.
+
+    To train a model we need to split the data. 70% for training and 30% for Testing
+
+    select the training features (columns). We want minimum features
+
+    Selected features
+    - Origin and Destination
+    - Day of Week 
+    - Carrier
+    - Departure Time Block
+    - Arrival Delay 15 (required)
+
+    R Training Tip
+    - Don't rewrite from scratch
+    - use Caret Package
+    
+---------------------------------------------------------------------------------
+Working in R:
+
+data_path <- "/home/json/Documents/git/MachineLearning/jan_2015_ontime.csv"
+
+origData <- read.csv2(data_path, sep = ",", header = TRUE, stringsAsFactors = FALSE)
+
+airports <- c('ATL','LAX','ORD','DFW','JFK','SFO','CLT','LAS','PHX')
+
+origData <- subset(origData, DEST %in% airports & ORIGIN %in% airports)
+
+# drop the X column
+origData$X <- NULL
+
+# Check for correlation the closer to 1 the more correlated the data is.
+cor(origData[c("ORIGIN_AIRPORT_SEQ_ID", "ORIGIN_AIRPORT_ID")])
+
+cor(origData[c("DEST_AIRPORT_ID","DEST_AIRPORT_SEQ_ID")])
+
+# Drop the ORIGIN_AIRPORT_SEQ_ID and DEST_AIRPORT_SEQ_ID since they are correlated
+origData$ORIGIN_AIRPORT_SEQ_ID <- NULL
+origData$DEST_AIRPORT_SEQ_ID <- NULL
+
+mismatched <- origData[origData$CARRIER != origData$UNIQUE_CARRIER,]
+
+# Filter the data for rows that do not have 0 or 1 in delay columns
+onTimeData <- origData[!is.na(origData$ARR_DEL15) & origData$ARR_DEL15 != "" & !is.na(origData$DEP_DEL15) & origData$DEP_DEL15 != "",]
+
+# Convert string to int when ints are stored as strings
+onTimeData$DISTANCE <- as.integer(onTimeData$DISTANCE)
+onTimeData$CANCELLED <- as.integer(onTimeData$CANCELLED)
+onTimeData$DIVERTED <- as.integer(onTimeData$DIVERTED)
+
+# Change data to factors when the variation of data is low like all 0's and 1's all Yes and No's
+onTimeData$ARR_DEL15 <- as.factor(onTimeData$ARR_DEL15)
+onTimeData$DEP_DEL15 <- as.factor(onTimeData$DEP_DEL15)
+onTimeData$DEST_AIRPORT_ID <- as.factor(onTimeData$DEST_AIRPORT_ID)
+onTimeData$ORIGIN_AIRPORT_ID <- as.factor(onTimeData$ORIGIN_AIRPORT_ID)
+onTimeData$DAY_OF_WEEK <- as.factor(onTimeData$DAY_OF_WEEK)
+onTimeData$DEST <- as.factor(onTimeData$DEST)
+onTimeData$ORIGIN <- as.factor(onTimeData$ORIGIN)
+onTimeData$DEP_TIME_BLK <- as.factor(onTimeData$DEP_TIME_BLK)
+onTimeData$CARRIER <- as.factor(onTimeData$CARRIER)
+
+# Now we need to test the distribution of our data. Rare events are harder to predict.
+tapply(onTimeData$ARR_DEL15, onTimeData$ARR_DEL15, length)
+#25664 ontime and 6460 delayed
+
+# Check the % of delayed Flights
+(6460 / nrow(onTimeData))
+#[1] 0.2010958 about 20% delayed Flights
+
+# Load the Caret package
+library(caret)
+
+# Set the seed for random gen
+set.seed(122515)
+
+# get the columns we need
+featureCols <-c("ARR_DEL15", "DAY_OF_WEEK", "CARRIER", "DEST", "ORIGIN", "DEP_TIME_BLK")
+ontimeDataFiltered <- onTimeData[,featureCols]
+
+# split the data into training and test
+inTrainRows <- createDataPartition(ontimeDataFiltered$ARR_DEL15, p=0.70, list = FALSE)
+trainDataFiltered <- ontimeDataFiltered[inTrainRows,]
+testDataFiltered <- ontimeDataFiltered[-inTrainRows,]
+
+# train the model
+# The first parameter is the value we are trying to predict and the columns used to predict it
+# sep the value to predict from the values used in prediction with a ~ since we already cleaned
+# the data we can use  a . for the columns to use.
+# the method="glm" is generalized linear regression. A list of methods is in the doc for caret
+# to make sure we use logistics regression we need to set the family to binomial
+
+# THIS DIDN'T WORK WELL
+#logisticRegModel <- train(ARR_DEL15 ~ ., data = trainDataFiltered, method="glm", family="binomial")
+
+# test the model
+
+# THIS DIDN'T WORK WELL
+#logRegPrediction <- predict(logisticRegModel, testDataFiltered)
+
+# evaluate the quality of the model by using caret's confusionMatrix function
+# the first param is the test we just ran and the second param is the test data's column we want to predict
+
+# THIS DIDN'T WORK WELL
+#logRegConfMat <- confusionMatrix(logRegPrediction, testDataFiltered[,"ARR_DEL15"])
+
+# THIS DIDN'T WORK WELL
+#print(logRegConfMat)
+
+# We need to improve our model, we have to many flights that are being delayed that are not being predected as delayed.
+# We are going to try a different Algo
+
+# Dump some stuff make RAM
+logisticRegModel <- NULL
+logRegConfMat <- NULL
+mismatched <- NULL
+onTimeData <- NULL
+ontimeDataFiltered <- NULL
+origData <- NULL
+
+
+library(randomForest)
+# The first param is the data minus the first col which is ARR_DEL15
+# The second param is the column we want to predict
+rfModel <- randomForest(trainDataFiltered[-1], trainDataFiltered$ARR_DEL15, proximity = TRUE, importance = TRUE)
+
+# Test the random forest
+rfValidation <- predict(rfModel, testDataFiltered)
+
+rfConfMat <- confusionMatrix(rfValidation, testDataFiltered[,"ARR_DEL15"])
+
+print(rfConfMat)
+
+#The first set of statistics is a matrix that compares the predictive and actual values for delays
+#               reference
+# prediction   0.00  1.00
+#       0.00     A    B
+#       1.00     C    D
+
+# A is the number of flights in the test data that were not delayed when the model predicted they would not be delayed.
+# B is the number of flights in the test data were delayed when the model predicted they would not be delayed.
+# C is the number of flights in the test data that were not delayed when the model predicted they would be delayed.
+# D is the number of flights in the test data that were delayed when the model predicted they would be delayed.
+
+# Accuracy is a ratio of the model prediction to the correct answer.
+# Sensitivity is the measure of how the model predicts no delay when there is no delay.
+# Specificity is the measure of how the model predicts delay when there is a delay.
+# Pos Pred Value is the measure of how the model predicts when there will be no delay
+# Neg Pred Value is the measure of how the model predicts when there will be a delay

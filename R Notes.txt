@@ -1,0 +1,542 @@
+DATA SCIENTIST WITH R:
+--------------------------------------------------------------------------------
+Variables:
+    Assign Variables with <-
+    x <- 42
+
+    Variable names follow python convention 
+    var_name <- 42
+
+    Types:
+        Decimals values like 4.5 are called numerics.
+        Natural numbers like 4 are called integers. Integers are also numerics.
+        Boolean values (TRUE or FALSE) are called logical.
+        Text (or string) values are called characters.
+
+        use class(Variable) to check it's type.
+--------------------------------------------------------------------------------
+Vectors:
+    Vectors are one-dimension arrays that can hold numeric data, character data,
+    or logical data.
+
+    Use the combine function to make a vector c(1,2,3) or c("one","two","three")
+
+        Names:
+        You can name the elements in a vector using the names() function.
+        This will create a sort of key value pair.
+        ex:
+        vec <- c(1,2,3,4)
+        names(vec) <- c("one", "two", "three", "four")
+        vec
+        one     two     three       four
+          1       2         3          4
+        
+        You can use a already completed vector to name another vector. Doing so
+        you can reuse the same name vector on multiple value Vectors
+
+    vectors use 1 based indexes in R unlike other languages that use 0
+    To access the first element use vector_name[1]...
+    You can access multiple elements in a vector by using another
+    vector as in the square brackets.
+    vector_name[c(1,3)]  this would select the first and third element in the
+    vector.
+    
+    If you would like to select a range of elements say first through third
+    you would do so like this:
+        vector_name[1:3]
+
+    You can also access vector elements by their name if it is a named vector.
+    vector_name["value_name"]
+
+    Vector Comparisons:
+        You can us comparisons against each element in a vector easily
+        vec <-(1,2,3)
+        vec > 2
+        [1] FALSE   FALSE   TRUE
+
+        You can use a vector with logical values to select specific elements!
+    
+    Vector Maths:
+        You can add two vectors together and R does element wise math.
+        var_one <- c(1,2,3)
+        var_two <- c(4,5,6)
+        var_one + var_two
+        [1] 5   7   9
+
+        you can use the sum() function to add up values in a vector
+        sum(var_one)
+        [1] 6
+        sum(var_one + var_two)
+        [1] 21
+    
+    Summary:
+        You can use the summary() function to get a summary for a Vector
+--------------------------------------------------------------------------------
+Matrix:
+    To create a matrix you use the matrix(values, byrow = true, nrow = n)
+    ex.
+    matrix(1:9, byrow = TRUE, nrow = 3)
+    output:
+         [,1] [,2] [,3]
+    [1,]    1    2    3
+    [2,]    4    5    6
+    [3,]    7    8    9
+
+    Names for rows and columns:
+        You can name rows with rownames()
+        You can name cols with colnames()
+    
+    You can add a column or multiple columns to a matrix with the cbind() function
+    which merges and / or vectors together by column.
+    You can do the same for rows using rbind() function.
+
+    colSums() will sum up cols
+    rowSums() will sum up rows
+
+    selection of specific elements works just like vectors but in 2D
+    matrix_name[1:3,2] will select rows one through three and column 2
+    matrix_name[,2] all rows col 1
+    matrix_name[1,] row 1 all cols
+
+    Matrix Maths:
+        Just like vector math, Matrix math is done element wise.
+    
+    Summary:
+        You can use the summary() function to get a summary for a Matrix
+
+--------------------------------------------------------------------------------
+Factors:
+    Factors are variables for categories rather than continuous data like
+    dates or numerics.
+    example: c("Male", "Female", "Male", "Male") has a factor of gender
+    to generate the factor from a vector  you use the factor() function.
+    factor_gender_vector <- factor( c("Male", "Female", "Male", "Male"))
+    factor_gender_vector
+    output:
+        [1] Male    Female  Male    Male
+        Levels: Female  Male
+    
+    There are two types of categorical variables. Nominal categorical and
+    Ordinal categorical variables. Nominal are ones in which order isn't implied
+    Ordinal are ones in which order is implied.
+    
+    Nominal ex:
+    factor(c("cat", "dog", "bird"))
+    
+    Ordinal ex:
+    factor(c("low","high","low","med"), 
+           order = TRUE, 
+           levels = c("low", "med", "high"))
+
+    Level Names:
+        You can change the level names of factors by using the levels() function.
+        
+        fac <- factor(c("f", "m", "f"))
+        levels(fac) <- c("Female", "Male")
+
+    Summary:
+        You can use the summary() function to get a summary for a factor
+
+--------------------------------------------------------------------------------
+Data Frames:
+    Data Frames are like tables in a database.
+    mtcars is a built in data frame you can use.
+
+    head() function lets you see just the start of the data frame.
+
+    tail() shows the end of the data frame.
+
+    str() will show you the structure of a data frame.
+
+    To create a data frame you can use the function data.frame() and pass in
+    vectors as the parameters.
+
+    you can run str() function on data frames to see their structure.
+
+    Selection of elements from a data frame is done like vectors and matrix
+    with square brackets data_frame[1,2] first row second col....
+
+    You can select columns with names by using the $ sign  $column_name
+
+    Subset Function:
+        subset(data_frame, subset = conditional_statement)
+
+
+--------------------------------------------------------------------------------
+Sorting Data:
+    order(data_here)
+    Use the order() function to sort data.  What is returned is the ranked 
+    position of each element.
+    ex:
+        vec <- c(100,20,3,30)
+        order(vec)
+        output:
+            [1] 3   2   4   1
+    This isn't what one would expect but it can be very useful and can be used
+    to order and display the values
+    ex:
+        vec[order(vec)]
+        output:
+            [1] 3   20  30  100
+
+--------------------------------------------------------------------------------
+Lists:
+    Lists can hold anything of any time.
+    You can name your list elements while you are adding them to the list :
+        my_list <- list(name1 = vector_name, name2 = vector_name2)
+    
+    You can also name your list items after the list has been created using the
+    names() function.
+
+    Selecting elements from a list:
+
+        A double set set of square brackets [[position]] will return the values
+        from the collection at that position in the list.
+
+        All of the same tricks work on list for range [[1:9]] or specific items
+        [[c(1,3,8)]]
+
+        To get at the value of a element inside of a collection in you list you
+        use sets of square brackets my_list[[2]][1] this would get the second
+        collection from the list and the first item from the second collection.
+    
+    Adding to a list is easy using the c() function ex:
+        new_list <- c(ext_list, my_name = my_val)
+
+--------------------------7/10/18-----------------------------------------------
+Relational Operators:
+    == equals  != Inequality  
+    < less than  > grater than
+    TRUE > FALSE because TRUE == 1 FALSE == 0
+
+    Relational Operators work on all objects in R... Vectors, Matrix, Lists, and
+    basic data types
+
+    Combining Relational Operators:
+        These are single symbols not doubled like other languages
+        & symbol for and
+        | symbol for or
+
+        You can use the double version of the symbols && and || to evaluate 
+        only the first objects in a vector. (Mostly want to use the single
+        symbol version in R)
+        
+        ! symbol for not
+
+        If you want to check if an object is between two others you must do so
+        like this:  var > 3 & var < 10
+
+--------------------------------------------------------------------------------
+Conditional Statements:
+    Normal if else if else structure
+    
+    if(condition){
+        expression 
+    } else if(condition) {
+        expression
+    } else {
+        expression
+    }
+
+    NOTE: the else if has to be on the same line as the closing }
+
+    Once R finds an if or else if it will run the statements in the block and
+    ignore the rest of the control structure.
+
+--------------------------------------------------------------------------------
+While Loop
+
+    while(condition){
+        expression
+    }
+
+    If you are Ty and get an infinite loop hit control+C to stop it
+
+    Just like other programing languages other control structures can be placed
+    inside each other.
+
+    break statement can be used to break out of a loop like other programing
+    languages.
+
+--------------------------------------------------------------------------------
+For Loop
+
+    for(var in seq){
+        expression
+    }
+
+    This is like a for each loop in other languages.
+    Break can be used in a For Loop too!
+    Next can be used in a for loop to skip to the next item in the sequence
+
+    You can also loop over i but it is a bit different than most languages
+
+    vec <- c("one", "two", "three", "four")
+    for (i in 1:length(vec)){
+        vec[i]
+        ....
+    }
+
+--------------------------------------------------------------------------------
+Paste
+    paste() is used to concat strings and numerics together.
+    ex: 
+    x <- 35
+    print(paste("X is equal to:", x))
+
+--------------------------------------------------------------------------------
+Functions
+    sd() function is for standard deviation. You pass a vector to it and it will
+    return the standard deviation for all of the numbers in the vector.
+
+    help() function will give you help for a given function
+    help(sd) will show the help for the standard deviation function mentioned
+    above.
+
+    function parameters are position sensitive but you can set them out of order
+    if you assign them by name. Functions can also have default values
+    sd(x,na.rm=false)
+
+    args() function will tell you about the arguments for a given function
+    args(sd)
+    output:  function(x,na.rm=FALSE)
+
+    Create your own function.
+
+    my_func <- function(arg1, arg2){
+        # body
+    }
+
+    The last expression calculated in a function becomes the return value.
+    You can explicitly call return(var)
+
+    Functions scope the variables defined inside them.
+    Functions pass arguments by value.
+
+--------------------------------------------------------------------------------
+Packages
+    To use packages you have to install them.
+    install.packages("package_name")
+    Then you have to load the package using the library() function
+    library("package_name")
+
+    You can use search() function to find loaded packages.
+
+    require() function is like library() but require() will throw a 
+    warning message
+
+--------------------------------------------------------------------------------
+lapply
+    iterates of list and applies a function to all objects. lapply always returns
+    a list not mater the data structure sent to it.
+
+    For functions with parameters you must list them by name after the function
+    ex:  lapply(my_vec, multiply, factor = 3)  where factor = 3 is the parameter
+    for the the multiply function.
+
+--------------------------------------------------------------------------------
+sapply
+    Same as lapply but returns named vector unless use.names = FALSE.
+    sapply will always try to simplify the results.
+
+--------------------------------------------------------------------------------
+vapply
+    You must explicitly state the return type.
+    vapply is similar to sapply, but has a pre-specified type of return value, 
+    so it can be safer (and sometimes faster) to use.
+
+    vapply(X, FUN, FUN.VALUE, …, USE.NAMES = TRUE)
+
+    FUN.VALUE
+    a (generalized) vector; a template for the return value from FUN.
+    Simplification is always done in vapply. This function checks that all 
+    values of FUN are compatible with the FUN.VALUE, in that they must have 
+    the same length and type. (Types may be promoted to a higher type within 
+    the ordering logical < integer < double < complex, but not demoted.)
+
+--------------------------------------------------------------------------------
+cat
+From base v3.5.1
+by R-core R-core@R-project.org
+14th
+Percentile
+
+Concatenate And Print
+Outputs the objects, concatenating the representations. cat performs much less 
+conversion than print.
+
+Keywords
+file, print, connection
+Usage
+cat(… , file = "", sep = " ", fill = FALSE, labels = NULL,
+    append = FALSE)
+Arguments
+…
+R objects (see ‘Details’ for the types of objects allowed).
+
+file
+A connection, or a character string naming the file to print to. 
+If "" (the default), cat prints to the standard output connection, the console 
+unless redirected by sink. If it is "|cmd", the output is piped to the command 
+given by cmd, by opening a pipe connection.
+
+sep
+a character vector of strings to append after each element.
+
+fill
+a logical or (positive) numeric controlling how the output is broken into 
+successive lines. If FALSE (default), only newlines created explicitly by "\n" 
+are printed. Otherwise, the output is broken into lines with print width equal 
+to the option width if fill is TRUE, or the value of fill if this is numeric. 
+Non-positive fill values are ignored, with a warning.
+
+labels
+character vector of labels for the lines printed. Ignored if fill is FALSE.
+
+append
+logical. Only used if the argument file is the name of file 
+(and not a connection or "|cmd"). If TRUE output will be appended to file; 
+otherwise, it will overwrite the contents of file.
+
+Details
+cat is useful for producing output in user-defined functions. It converts its 
+arguments to character vectors, concatenates them to a single character vector, 
+appends the given sep =  string(s) to each element and then outputs them.
+
+No linefeeds are output unless explicitly requested by "\n" or if generated by 
+filling (if argument fill is TRUE or numeric).
+
+If file is a connection and open for writing it is written from its current 
+position. If it is not open, it is opened for the duration of the call in "wt" 
+mode and then closed again.
+
+Currently only atomic vectors and names are handled, together with NULL and 
+other zero-length objects (which produce no output). Character strings are 
+output ‘as is’ (unlike print.default which escapes non-printable characters 
+and backslash --- use encodeString if you want to output encoded strings 
+using cat). Other types of R object should be converted 
+(e.g., by as.character or format) before being passed to cat. That includes 
+factors, which are output as integer vectors.
+
+cat converts numeric/complex elements in the same way as print 
+(and not in the same way as as.character which is used by the S equivalent), 
+so options "digits" and "scipen" are relevant. However, it uses the minimum 
+field width necessary for each element, rather than the same field width for 
+all elements.
+
+Value
+None (invisible NULL).
+
+Note
+If any element of sep contains a newline character, it is treated as a vector 
+of terminators rather than separators, an element being output after every 
+vector element and a newline after the last. Entries are recycled as needed.
+
+References
+Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) The New S Language. 
+Wadsworth & Brooks/Cole.
+
+See Also
+print, format, and paste which concatenates into a string.
+
+Examples
+library(base) # NOT RUN { iter <- stats::rpois(1, lambda = 10) ## print an 
+informative message cat("iteration = ", iter <- iter + 1, "\n") ## 'fill' 
+and label lines: 
+cat(paste(letters, 100* 1:26), fill = TRUE, labels = paste0("{", 1:10, "}:")) # }
+
+--------------------------------------------------------------------------------
+Regular Expressions
+    ^ means start of the line
+    
+    $ means end of the line
+    
+    .*: A usual suspect! It can be read as "any character that is matched zero 
+        or more times".
+    
+    \\s: Match a space. The "s" is normally a character, escaping it (\\) makes 
+        it a metacharacter.
+    
+    [0-9]+: Match the numbers 0 to 9, at least once (+).
+    
+    ([0-9]+): The parentheses are used to make parts of the matching string 
+                available to define the replacement. The \\1 in the replacement 
+                argument of sub() gets set to the string that is captured by 
+                the regular expression [0-9]+.
+
+    ^a  ant
+    a$  impala
+
+    Help can be found ?regex
+
+    functions 
+        gerpl()
+        grep()
+        sub() replace the first pattern found
+        gsub() replace all the patterns found
+
+--------------------------------------------------------------------------------
+Dates and Time
+    today <- Sys.Date()
+    today
+    [1] "2018-07-11"
+
+    class(today)
+    [1] "Date"
+
+    now <- Sys.time()
+    now
+    [1] "2018-07-11 08:54:03 CEST"
+
+    class(now)
+    [1] "POSIXct" "POSIXt"
+
+    my_bday <- as.Date("1981-10-23")
+
+    Dates based on Jan 1st 1970
+
+    %Y: 4-digit year (1982)
+    %y: 2-digit year (82)
+    %m: 2-digit month (01)
+    %d: 2-digit day of the month (13)
+    %A: weekday (Wednesday)
+    %a: abbreviated weekday (Wed)
+    %B: month (January)
+    %b: abbreviated month (Jan)
+    %H: hours as a decimal number (00-23)
+    %I: hours as a decimal number (01-12)
+    %M: minutes as a decimal number
+    %S: seconds as a decimal number
+    %T: shorthand notation for the typical format %H:%M:%S
+    %p: AM/PM indicator
+
+--------------------------------------------------------------------------------
+dplyr package
+
+Filtering:
+
+    using the dataset gapminder that is a matrix
+
+    gapminder %>% filter(year == 2007)
+
+    %>%  is called a pipe it takes what ever is to the left and feeds it to the
+    next step.
+
+Arrange / Sorting:
+    just like filter but you sort on a column
+
+    gapminder %>% arrange(gdpPercap)
+
+    gapminder %>% arrange(desc(gdpPercap))
+
+Mutate:
+    Use mutate to change a var or add a new one.
+    
+    To mutate population by div by 10000000
+    gapminder %>% mutate(pop = pop / 1000000)
+
+    To add a column
+    gapminder %>% mutate(gdp = gdpPercap * pop)
+    in this case gdp would be a new column
+
+--------------------------------------------------------------------------------
